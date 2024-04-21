@@ -17,11 +17,36 @@ namespace Waigaya3.Controllers
             this.dbContext = dbContext;
         }
 
-        public IActionResult Index()
+        /*public IActionResult Index()
         {
             ViewBag.ConnectionString = dbContext.Database.GetConnectionString();
             return View();
+        }*/
+
+        public IActionResult Index()
+        {
+            bool isConnectionSuccessful;
+
+            try
+            {
+                // データベース接続テスト
+                using (var context = new WaigayaDbContext())
+                {
+                    context.Database.CanConnect();
+                }
+                isConnectionSuccessful = true;
+            }
+            catch
+            {
+                isConnectionSuccessful = false;
+            }
+
+            ViewBag.IsConnectionSuccessful = isConnectionSuccessful;
+            ViewBag.ConnectionString = dbContext.Database.GetConnectionString();
+
+            return View();
         }
+
 
         public IActionResult Privacy()
         {
