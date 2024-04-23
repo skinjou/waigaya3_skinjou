@@ -1,6 +1,6 @@
 ﻿@model Waigaya3.Controllers.Response.Product.EntryResponse;
 
-<form asp-controller="Products" asp-action="Upsert" method="post">
+<form>
     <div class="container mt-5">
         <!-- 商品名 -->
         <div class="mb-3">
@@ -63,36 +63,52 @@
 @section Scripts {
     <script>
         $('#btnSave').on('click', function () {
-            const data = $('form').serialize();
+            // フォーム要素の内容を x-www-urlencorded 形式に変換
+            const datas = $('form').serialize();
+            
             $.ajax({
                 url: '/Products/Upsert',
                 type: 'POST',
-                data: data,
+                data: datas,
+                timeout: 5000,
             })
-                .done(function (data) {
-                    // 成功
-                    bootbox.alert('保存しました！');
-                })
-                .fail(function () {
-                    // 失敗
-                    bootbox.alert('失敗しました！');
+            .done(function (data) {
+                // 通信成功時の処理を記述
+                bootbox.alert('保存しました！', function () {
+                    // IDがなし（新規）の場合、新規登録画面を再度呼出
+                    if (!$("#productId").val()) {
+                        window.location.href = '/Products/product_entry/';
+                    }
                 });
-        })
+            })
+            .fail(function () {
+                // 通信失敗時の処理を記述]
+                bootbox.alert('保存失敗！');
+            });
+        });
+
         $('#btnDelete').on('click', function () {
-            const data = $('form').serialize();
-            $.ajax({
-                url: '/Products/Delete',
-                type: 'POST',
-                data: data,
-            })
-                .done(function (data) {
-                    // 成功
-                    bootbox.alert('削除しました！');
-                })
-                .fail(function () {
-                    // 失敗
-                    bootbox.alert('失敗しました！');
-                });
-        })
+            bootbox.confirm('削除しますか？', function (result) {
+                if (result) 
+                {
+                    const datas = $('form').serialize();
+
+                    $.ajax({
+                        url: '/Products/Delete',
+                        type: 'POST',
+                        data: datas,
+                        timeout: 5000,
+                    })
+                    .done(function (data) {
+                        //削除成功時に一覧画面を表示
+                        window.location.href = '/Products';
+                    })
+                    .fail(function () {
+                        // 通信失敗時の処理を記述]
+                        bootbox.alert('削除失敗！');
+                    });
+                }
+            });
+        });
     </script>
 }

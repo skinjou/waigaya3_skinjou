@@ -78,7 +78,6 @@ namespace Waigaya3.Controllers
                 product.CategoryId = request.CategoryId;
             }
             _context.SaveChanges();
-            // return RedirectToAction(nameof(Index));
             return Ok();
         }
 
@@ -104,7 +103,7 @@ namespace Waigaya3.Controllers
                 return BadRequest();
             }
 
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
     }
 }
